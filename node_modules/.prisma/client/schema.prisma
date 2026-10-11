@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -66,7 +66,7 @@ model Category {
   id          Int          @id @default(autoincrement())
   name        String
   slug        String       @unique
-  description String?
+  description String?      @db.Text
   color       String?
   icon        String?
   aspirations Aspiration[]
@@ -79,7 +79,7 @@ model Aspiration {
   maskedPhone       String
   phoneVerified     Boolean                   @default(false)
   title             String
-  content           String
+  content           String                    @db.Text
   categoryId        Int
   category          Category                  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   provinceId        Int
@@ -93,8 +93,8 @@ model Aspiration {
   latitude          Float
   longitude         Float
   status            String                    @default("MENUNGGU_VERIFIKASI")
-  adminNote         String?
-  evidenceImage     String?
+  adminNote         String?                   @db.Text
+  evidenceImage     String?                   @db.LongText
   verifiedByAdminId Int?
   verifiedByAdmin   Admin?                    @relation("AspirationVerifier", fields: [verifiedByAdminId], references: [id], onDelete: SetNull)
   statusHistory     AspirationStatusHistory[]
@@ -113,7 +113,7 @@ model AspirationStatusHistory {
   aspiration   Aspiration @relation(fields: [aspirationId], references: [id], onDelete: Cascade)
   oldStatus    String?
   newStatus    String
-  note         String?
+  note         String?    @db.Text
   adminId      Int?
   admin        Admin?     @relation(fields: [adminId], references: [id], onDelete: SetNull)
   createdAt    DateTime   @default(now())
